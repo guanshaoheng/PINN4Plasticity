@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# virtualenv jupyterenv
+# pip install jupyterlab
+
+source ~/jupyterNotebook/jupyterenv/bin/activate
+cd ~/PINN4Plasticity/bin
+jupyter-lab

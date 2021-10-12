@@ -24,7 +24,8 @@ class DenseResNet(nn.Module):
     """
     def __init__(self, dim_in=2, dim_out=1, num_resnet_blocks=3,
                  num_layers_per_block=2, num_neurons=50, activation=nn.Sigmoid(),
-                 fourier_features=False, m_freqs=100, sigma=10, tune_beta=False, device=torch.device('cpu')):
+                 fourier_features=False, m_freqs=100, sigma=10, tune_beta=False, device=torch.device('cpu'),
+                 simpleLinearFlag=False):
         super(DenseResNet, self).__init__()
 
         self.num_resnet_blocks = num_resnet_blocks
@@ -33,6 +34,7 @@ class DenseResNet(nn.Module):
         self.activation = activation
         self.tune_beta = tune_beta
         self.device = device
+        self.simpleLinearFlag = simpleLinearFlag
 
         if tune_beta:
             self.beta0 = nn.Parameter(torch.ones(1, 1))
@@ -71,7 +73,10 @@ class DenseResNet(nn.Module):
             for j in range(1, self.num_layers_per_block):
                 z = self.activation(self.beta[i][j]*self.resblocks[i][j](z))
 
-            x = z + x
+            if self.simpleLinearFlag:
+                x = z
+            else:
+                x = z + x
 
         out = self.last(x)
 
